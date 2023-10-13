@@ -1,0 +1,34 @@
+Certainly, here's an explanation for each line of the Python code:
+
+```python
+import cv2
+import numpy as np
+```
+These lines import the necessary libraries. `cv2` is the OpenCV library, which is used for image processing, and `numpy` is used for numerical operations on arrays.
+
+```python
+image = cv2.imread('x-ray-image.jpg')
+```
+This line reads the image 'x-ray-image.jpg' from the specified file path and stores it in the variable 'image'.
+
+```python
+gray = cv2.cvtColor(image, cv2.COLOR_BGR2GRAY)
+```
+This line converts the 'image' from BGR (Blue-Green-Red) color space to grayscale using the cvtColor function.
+
+```python
+bilateral_filtered = cv2.bilateralFilter(gray, 9, 75, 75)
+```
+Here, the bilateral filter is applied to the grayscale image. This filter smooths the image while preserving the edges, reducing noise and maintaining important details.
+
+```python
+inverted = cv2.bitwise_not(bilateral_filtered)
+```
+The bitwise_not function is applied to the filtered image, which inverts the grayscale intensities. This inversion helps simulate the appearance of an X-ray image.
+
+```python
+cv2.imshow('X-ray-like Image', inverted)
+cv2.waitKey(0)
+cv2.destroyAllWindows()
+```
+These lines display the resulting X-ray-like image. The `imshow` function displays the image in a window with the specified title. The `waitKey` function pauses the execution until a key is pressed. Finally, `destroyAllWindows` closes all open windows.
