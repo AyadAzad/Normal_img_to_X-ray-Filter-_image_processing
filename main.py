@@ -2,16 +2,33 @@ import cv2
 import numpy as np
 
 # Load the image
-image = cv2.imread(r'C:\Users\Ayad\OneDrive\Desktop\computer_graphics\teeth.jpeg')
+image = cv2.imread(r'C:\Users\Ayad\OneDrive\Desktop\computer_graphics\teeth_2.jpeg')
 
 # Convert the image to grayscale
 gray = cv2.cvtColor(image, cv2.COLOR_BGR2GRAY)
 
-# Apply bilateral filter to reduce noise while maintaining edges
-bilateral_filtered = cv2.bilateralFilter(gray, 9, 75, 75)
+# Apply adaptive histogram equalization to enhance contrast
+clahe = cv2.createCLAHE(clipLimit=3.0, tileGridSize=(8, 8))
+clahe_image = clahe.apply(gray)
+
+# Apply Gaussian blur to reduce noise
+blurred = cv2.GaussianBlur(clahe_image, (9, 9), 0)
+
+# Apply high-pass filter to enhance edges
+kernel = np.array([[-1, -1, -1], [-1, 9, -1], [-1, -1, -1]])
+high_pass = cv2.filter2D(blurred, -1, kernel)
+
+# Adjust contrast and brightness to enhance details
+alpha = 1.8  # Contrast control (1.0-3.0)
+beta = 30  # Brightness control (0-100)
+adjusted = cv2.convertScaleAbs(high_pass, alpha=alpha, beta=beta)
+
+# Apply morphological transformations for noise reduction
+kernel = np.ones((2, 2), np.uint8)
+morph = cv2.morphologyEx(adjusted, cv2.MORPH_OPEN, kernel)
 
 # Invert the image for a more realistic X-ray appearance
-inverted = cv2.bitwise_not(bilateral_filtered)
+inverted = cv2.bitwise_not(morph)
 
 # Display the resulting X-ray-like image
 cv2.imshow('X-ray-like Image', inverted)
